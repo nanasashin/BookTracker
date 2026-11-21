@@ -6,6 +6,7 @@ uvicorn main:app --host 127.0.0.1 --port 8080
 ```
 
 2. Opening the Index Webpage
+Open this http in a browser
 ```
-python -m http.server 8080 --bind 127.0.0.1
+http://127.0.0.1:8000/
 ```
