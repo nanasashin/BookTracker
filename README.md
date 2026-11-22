@@ -1,3 +1,6 @@
+0. Setup
+Make '''.env''' file in the root directory
+
 1. Running the server
 
 Run this command in app directory
