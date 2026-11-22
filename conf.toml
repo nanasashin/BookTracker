@@ -1,0 +1,6 @@
+[database]
+host = "app/database"
+
+[html]
+book="web/book/index.html"
+
