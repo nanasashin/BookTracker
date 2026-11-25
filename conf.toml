@@ -4,3 +4,5 @@ host = "app/database"
 [html]
 book="web/book/index.html"
 
+[import]
+jquery="external/jquery/jquery.js"
