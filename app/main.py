@@ -1,15 +1,18 @@
 from pathlib import Path
+import tomllib
+
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Field, SQLModel
 
 from pydantic import BaseModel
 
-import tomllib
+from database import create_db_and_tables, get_engine
 
 class Book(BaseModel):
     title: str
@@ -19,7 +22,16 @@ class Book(BaseModel):
 class BookDB(Book):
     id: int | None = Field(default=None, primary_key=True)
 
-app = FastAPI()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    SQLModel.metadata.create_all(get_engine())
+
+    yield
+
+app = FastAPI(lifespan=lifespan)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 with open(BASE_DIR / "conf.toml", "rb") as f:
@@ -27,7 +39,7 @@ with open(BASE_DIR / "conf.toml", "rb") as f:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -42,11 +54,8 @@ def test():
 
 @app.post("/api/book/")
 def create_book(book: Book):
-    book_db: BookDB = book.model_validate(BookDB)
-    book_db.id = 10
-    book_dict = book_db.model_dump()
-    return book_dict
-
+    book_dict = book.model_dump()
+    return {"book_dict": book_dict, "status": "valid"}
 
 @app.get("/app/jquery")
 async def jquery():
