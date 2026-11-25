@@ -6,7 +6,26 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="test" onclick="test()">Test</button>
+    <script src="/app/jquery"></script>
+
+    <div class="main-details">
+        <div class="cover">
+            <label for="book-cover-input">Book Cover Input</label>
+            <input type="file" id="book-cover-input" name="book-cover" accept="image/png, image/jpeg">
+        </div>
+        <div class="details">
+            <label for="book-title-input">Book Title</label>
+            <input type="text" id="book-title-input" name="book-title">
+        
+            <label for="book-author-input">Book Author</label>
+            <input type="text" name="book-author-input" id="book-author">
+            
+            <label for="book-genre-input">Book Genre</label>
+            <input type="text" name="book-genre-input" id="book-genre">        
+        </div>
+    </div>
+
+    <button id="save-book">Save Book</button>
 
     <script src="/script.js?v=1.1"></script>
 </body>
