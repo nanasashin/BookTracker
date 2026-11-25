@@ -1,19 +1,28 @@
 from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+
+from sqlmodel import Field, Session, SQLModel, create_engine, select
+
+from pydantic import BaseModel
+
 import tomllib
-import os
-from dotenv import load_dotenv
 
+class Book(BaseModel):
+    title: str
+    author: str
+    genre: str
 
-load_dotenv()
+class BookDB(Book):
+    id: int | None = Field(default=None, primary_key=True)
 
 app = FastAPI()
-base_dir = Path(os.environ.get("WORKING_DIR"))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-with open(os.environ.get("BOOK_TRACKER_CONFIG", "../conf.toml"), "rb") as f:
+with open(BASE_DIR / "conf.toml", "rb") as f:
     cfg = tomllib.load(f)
 
 app.add_middleware(
@@ -25,11 +34,23 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return FileResponse(base_dir / cfg["html"]["book"])
+    return FileResponse(BASE_DIR / cfg["html"]["book"])
 
 @app.get("/api/test")
 def test():
-	return cfg
+    return {"ok": "ok"}
 
-html_dir = base_dir / "web" / "book" 
-app.mount("/", StaticFiles(directory=html_dir, html=True), name="static")
+@app.post("/api/book/")
+def create_book(book: Book):
+    book_db: BookDB = book.model_validate(BookDB)
+    book_db.id = 10
+    book_dict = book_db.model_dump()
+    return book_dict
+
+
+@app.get("/app/jquery")
+async def jquery():
+    return FileResponse(BASE_DIR / cfg["import"]["jquery"])
+
+app.mount("/", StaticFiles(directory=BASE_DIR / "web" / "book" , html=True), name="static")
+
