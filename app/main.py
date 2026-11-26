@@ -11,12 +11,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
 
 from database import create_db_and_tables, get_engine
-from table import *
+from table import * 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_db_and_tables()
-    SQLModel.metadata.create_all(get_engine())
 
     yield
 
@@ -37,10 +36,6 @@ app.add_middleware(
 async def root():
     return FileResponse(BASE_DIR / cfg["html"]["book"])
 
-@app.post("/api/book/")
-def create_book(book: Book):
-    book_dict = book.model_dump()
-    return {"book_dict": book_dict, "status": "valid"}
 
 @app.get("/external/jquery")
 async def jquery():
