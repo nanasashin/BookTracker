@@ -5,8 +5,8 @@
 Install Dependencies
 ```
 pip install "fastapi[standard]"
-pip install "fastapi[standard]" sqlmodel
 
+pip install "fastapi[standard]" sqlmodel
 ```
 
 ## 1. Running the server

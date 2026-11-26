@@ -8,21 +8,10 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-from sqlmodel import Field, SQLModel
-
-from pydantic import BaseModel
+from sqlmodel import SQLModel
 
 from database import create_db_and_tables, get_engine
-
-class Book(BaseModel):
-    title: str
-    author: str
-    genre: str
-
-class BookDB(Book):
-    id: int | None = Field(default=None, primary_key=True)
-
-
+from table import *
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -48,16 +37,12 @@ app.add_middleware(
 async def root():
     return FileResponse(BASE_DIR / cfg["html"]["book"])
 
-@app.get("/api/test")
-def test():
-    return {"ok": "ok"}
-
 @app.post("/api/book/")
 def create_book(book: Book):
     book_dict = book.model_dump()
     return {"book_dict": book_dict, "status": "valid"}
 
-@app.get("/app/jquery")
+@app.get("/external/jquery")
 async def jquery():
     return FileResponse(BASE_DIR / cfg["import"]["jquery"])
 
